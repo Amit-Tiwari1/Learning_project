@@ -1,91 +1,90 @@
-import { DataTypes, STRING } from 'sequelize';
-import dbConnected from "../db/index.js";
+import mongoose from "mongoose";
 
-const Rider = dbConnected.define('Rider', {
-    Rider_Id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true
-    },
+const RiderSchema = new mongoose.Schema(
+  {
+    // Rider_Id: {
+    //     type: Number,
+    //     required: true,
+    //     unique: true,
+    //     index: true
+    // },
     fullName: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: String,
+      required: true,
     },
     email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-        validate: {
-            isEmail: true,
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+        validator: function (v) {
+          return /\S+@\S+\.\S+/.test(v);
         },
+        message: (props) => `${props.value} is not a valid email address!`,
+      },
     },
     password: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: String,
+      required: true,
     },
     phoneNumber: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: String,
+      required: true,
     },
     adharCard: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-        validate: {
-            len: [12, 12],
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+        validator: function (v) {
+          return /^\d{12}$/.test(v);
         },
+        message: (props) => `${props.value} is not a valid Aadhar Card number!`,
+      },
     },
     drivingLicense: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
+      type: String,
+      required: true,
+      unique: true,
     },
     age: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-            min: 18, 
-        },
+      type: Number,
+      required: true,
+      min: [18, "Age must be at least 18"],
     },
     vehicleNumber: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: String,
+      required: true,
     },
     vehicleModel: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: String,
+      required: true,
     },
     isActive: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
+      type: Boolean,
+      default: true,
     },
-    isDeleted:{
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
     latitude: {
-        type: DataTypes.DECIMAL(10, 8),
-        allowNull: true,
+      type: Number,
     },
     longitude: {
-        type: DataTypes.DECIMAL(11, 8),
-        allowNull: true,
+      type: Number,
     },
-    isAuthenticated:{
-        type: DataTypes.BOOLEAN, // Changed to DataTypes.BOOLEAN
-        defaultValue: false,
-        allowNull: false
+    isAuthenticated: {
+      type: Boolean,
+      default: false,
     },
-    otp:{
-        type:STRING,
-        allowNull:true
-    }
-}, {
-    tableName: 'Rider', 
-    timestamps: true,
-});
+    otp: {
+      type: String,
+    },
+  },
+  { timestamps: true }
+);
+
+const Rider = mongoose.model("Rider", RiderSchema);
 
 export default Rider;

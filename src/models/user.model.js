@@ -1,54 +1,51 @@
-import { DataTypes } from 'sequelize';
-import dbConnected from "../db/index.js";
+import mongoose from "mongoose";
 
-const User = dbConnected.define('User', {
-    user_Id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true
-    },
+const UserSchema = new mongoose.Schema(
+  {
     user_Name: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: String,
+      required: true,
     },
     user_Email: {
-        type: DataTypes.STRING, // Ensure it's mapped correctly as STRING
-        allowNull: false,
-        unique: true,
-        validate: {
-            isEmail: true,
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+        validator: function (v) {
+          return /\S+@\S+\.\S+/.test(v);
         },
+        message: (props) => `${props.value} is not a valid email address!`,
+      },
     },
     user_PhoneNumber: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: String,
+      required: true,
     },
     Is_Active: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
+      type: Boolean,
+      default: true,
     },
     Is_deleted: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
+      type: Boolean,
+      default: false,
     },
     longitude: {
-        type: DataTypes.DECIMAL(11, 8),
-        allowNull: true,
+      type: Number,
     },
     latitude: {
-        type: DataTypes.DECIMAL(10, 8),
-        allowNull: true,
+      type: Number,
     },
     otp: {
-        type: DataTypes.STRING, // Assuming OTPs are strings
-        allowNull: true,
-    }
-}, {
-    tableName: 'User', 
-    timestamps: true,
-});
+      type: String,
+    },
+    isAuthenticated: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true }
+);
+
+const User = mongoose.model("User", UserSchema);
 
 export default User;
